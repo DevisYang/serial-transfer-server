@@ -1,0 +1,14 @@
+//
+// Created by cgutech on 2020/4/16.
+//
+
+#ifndef SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
+#define SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
+
+
+class TransferServer {
+
+};
+
+
+#endif //SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
