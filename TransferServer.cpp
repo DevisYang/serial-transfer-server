@@ -7,24 +7,29 @@
 #include <rapidjson/document.h>
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
-#include "rapidjson/rapidjson.h"
 #include "hex.h"
 
 TransferServer::TransferServer()
 {
-	pFactroy = nullptr;
+    pFactroy = CreateWebSockServerFactory();
+    server = nullptr;
+}
+
+TransferServer::~TransferServer() {
+    pFactroy->Release();
 }
 
 bool TransferServer::Start(int net_port) {
-	if (pFactroy != nullptr) {
+	if (server != nullptr) {
 		return false;
 	}
 
-	pFactroy = CreateWebSockServerFactory();
 	server = pFactroy->CreateWebSockServer();
 	server->RegisterHandlerListener(this);
 	server->Open(net_port);
 	pFactroy->Run();
+
+    return true;
 }
 
 void TransferServer::Stop() {
@@ -86,7 +91,23 @@ void TransferServer::onData(uint8_t* data, int size, std::shared_ptr<IWebSockHan
 }
 
 void TransferServer::onData(uint8_t* data, int size, std::shared_ptr<ISerialHandler>& handler) {
-
+	if (websocks.find(handler->GetKey()) == websocks.end()) {
+		// 串口未绑定，关闭串口
+		handler->Close();
+		return;
+	}
+	auto websock = websocks[handler->GetKey()];
+	auto hex = BytesToHexString(data, size);
+	rapidjson::Document document;
+	rapidjson::Document::AllocatorType& allocator = document.GetAllocator();
+	rapidjson::Value res(rapidjson::kObjectType);
+	res.AddMember("type", "data", allocator);
+	addMember("data", hex, res, allocator);
+	rapidjson::StringBuffer  buff;
+	rapidjson::Writer<rapidjson::StringBuffer>  writer(buff);
+	res.Accept(writer);
+	auto s = buff.GetString();
+	websock->Write((uint8_t*)s, buff.GetSize());
 }
 
 void TransferServer::onWebSockHandler(std::shared_ptr<IWebSockHandler> handler, const std::string& key) {
@@ -102,8 +123,8 @@ void TransferServer::onOpen(rapidjson::Document&doc, std::shared_ptr<IWebSockHan
 	else {
 		auto serial = pFactroy->CreateSerialHandler();
 		serial->SetDataReceiver(this, serial);
-		const char* name = res["serial_name"].GetString();
-		if (!serial->Open(name, res["serial_baud"].GetInt())) {
+		const char* name = doc["serial_name"].GetString();
+		if (!serial->Open(name, doc["serial_baud"].GetInt())) {
 			res.AddMember("success", rapidjson::Value(false), allocator);
 			res.AddMember("message", rapidjson::Value("打开串口失败"), allocator);
 		}
@@ -132,15 +153,18 @@ void TransferServer::onSend(std::string data, std::shared_ptr<IWebSockHandler>& 
 
 void TransferServer::onClose(std::shared_ptr<IWebSockHandler>& handler, rapidjson::Value& res, rapidjson::Document::AllocatorType& allocator)
 {
-	if (serials.find(handler->GetKey()) != serials.end()) {
+	if (serials.find(handler->GetKey()) == serials.end()) {
 		res.AddMember("success", rapidjson::Value(false), allocator);
 		res.AddMember("message", rapidjson::Value("串口不存在"), allocator);
 		return;
 	}
+
 	auto serial = serials[handler->GetKey()];
 	serial->Close();
+	std::cout << "count=" << serial.use_count() << std::endl;
 	websocks.erase(serial->GetKey());
 	serials.erase(handler->GetKey());
+	std::cout << "count=" << serial.use_count() << std::endl;
 }
 
 void TransferServer::addMember(const char* key, std::string value, rapidjson::Value& res, rapidjson::Document::AllocatorType& allocator) {

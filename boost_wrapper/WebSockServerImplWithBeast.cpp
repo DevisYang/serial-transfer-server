@@ -72,6 +72,7 @@ void WebSockHandlerImpl::onRead(boost::beast::error_code ec, std::size_t bytes_t
     if(ec) {
         std::cout<<"读取失败:"<<ec.message()<<std::endl;
 		handlers.erase(ip);
+		obj = nullptr; // 如果没有行，智能指针会一直占用，该对象永远不会被释放
         return;
     }
 	ws.text(ws.got_text());

@@ -2,23 +2,17 @@
 // Created by cgutech on 2020/4/16.
 //
 
-#ifndef SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
-#define SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
+#ifndef SERIAL_TRANSFER_SERVER_TRANSFER_SERVER_H
+#define SERIAL_TRANSFER_SERVER_TRANSFER_SERVER_H
 #include "boost_wrapper/web_sock.h"
 #include <map>
 #include <rapidjson/document.h>
-struct ConnData {
-public:
-	enum ConnType { SERIAL_DATA, WEB_SOCK_DATA };
-	ConnType type;
-	std::shared_ptr<IWebSockHandler> websock;
-	std::shared_ptr<ISerialHandler> serial;
-};
 
 class TransferServer : public IDataReceiver<IWebSockHandler>, public IDataReceiver<ISerialHandler>, public IWebSockServerHandlerListener
 {
 public:
 	TransferServer();
+	~TransferServer();
 	bool Start(int net_port);
 	void Stop();
 private:
@@ -39,4 +33,4 @@ private:
 	void addMember(const char* key, std::string value, rapidjson::Value& res,  rapidjson::Document::AllocatorType& allocator);
 };
 
-#endif //SERIAL_TRANSFER_SERVER_TRANSFERSERVER_H
+#endif //SERIAL_TRANSFER_SERVER_TRANSFER_SERVER_H

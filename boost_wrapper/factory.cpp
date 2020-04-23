@@ -4,7 +4,7 @@
 
 #include "factory.h"
 #include "WebSockServerImplWithBeast.h"
-#include "SerialHandlerImplWithBoost.h"
+#include "SerialHandlerImpl.h"
 BoostWrapperFactoryImpl::BoostWrapperFactoryImpl(int ths)
 	:threads(ths), io(ths)  {
 
@@ -15,7 +15,7 @@ std::unique_ptr<IWebSockServer> BoostWrapperFactoryImpl::CreateWebSockServer() {
 }
 
 std::shared_ptr<ISerialHandler> BoostWrapperFactoryImpl::CreateSerialHandler() {
-	return std::shared_ptr<ISerialHandler>(new SerialHandlerImplWithBoost(io));
+	return std::shared_ptr<ISerialHandler>(new SerialHandlerImpl(io));
 }
 
 void BoostWrapperFactoryImpl::Run() {

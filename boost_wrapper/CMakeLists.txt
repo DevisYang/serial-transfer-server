@@ -17,7 +17,7 @@ ELSE()
     link_directories(G:/source/boost_1_72_0/stage/lib)
 endif()
 ADD_DEFINITIONS(-D DLL_WRAPPER_API)
-set(WEB_SOCK_SOURCE web_sock.h web_sock.cpp WebSockServerImplWithBeast.cpp WebSockServerImplWithBeast.h SerialHandlerImplWithBoost.cpp SerialHandlerImplWithBoost.h factory.cpp factory.h)
+set(WEB_SOCK_SOURCE web_sock.h web_sock.cpp WebSockServerImplWithBeast.cpp WebSockServerImplWithBeast.h SerialHandlerImpl.cpp SerialHandlerImpl.h factory.cpp factory.h)
 
 # 以动态链接库方式提供boost库的封装
 add_library(web_sock SHARED ${WEB_SOCK_SOURCE})

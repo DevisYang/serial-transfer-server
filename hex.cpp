@@ -1,6 +1,6 @@
 #include "hex.h"
 static const char B2H[] = "0123456789ABCDEF";
-std::string BytesToHexString(uint8_t* data, int size) {
+std::string BytesToHexString(const uint8_t* data, int size) {
 	std::string res;
 	for (int i = 0; i < size; i++) {
 		res += (B2H[(data[i] >> 4) & 0x0F]);

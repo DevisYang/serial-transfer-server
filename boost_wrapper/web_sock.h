@@ -1,6 +1,9 @@
 ﻿#ifndef WRAPPER_DLL_H
 #define WRAPPER_DLL_H
 
+#include <cstdint>
+#include <memory>
+#include <string>
 
 #ifdef MSVC
 #ifdef DLL_WRAPPER_API
@@ -12,9 +15,7 @@
 #define DLL_WRAPPER_EXPORT_API
 #endif
 
-#include <cstdint>
-#include <memory>
-#include <string>
+
 template<class T>
 class IDataReceiver {
 public:
@@ -55,12 +56,12 @@ public:
 	virtual const std::string& GetKey() = 0;
 };
 
-#include<memory>
 class IWrapperFactory {
 public:
 	virtual std::unique_ptr<IWebSockServer> CreateWebSockServer() = 0;
     virtual std::shared_ptr<ISerialHandler> CreateSerialHandler() = 0;
     virtual void Run() = 0;
+    virtual void Release() = 0;
 };
 
 extern "C" DLL_WRAPPER_EXPORT_API IWrapperFactory* CreateWebSockServerFactory();
