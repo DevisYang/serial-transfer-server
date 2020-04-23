@@ -10,13 +10,13 @@
 class SerialHandlerImplWithBoost : public ISerialHandler {
 public:
     SerialHandlerImplWithBoost(const boost::asio::io_service& );
-    virtual void Open(const char* port, int baud);
-    virtual void SetDataReceiver(IDataReceiver* receiver, void* obj);
+    virtual bool Open(const char* port, int baud);
+    virtual void SetDataReceiver(IDataReceiver<ISerialHandler>* receiver, std::shared_ptr<ISerialHandler>& obj);
     virtual bool Write(uint8_t* data, int size);
     virtual void Close();
-    virtual void Release();
+	virtual const std::string& GetKey();
 private:
-
+	std::string key;
 };
 
 
