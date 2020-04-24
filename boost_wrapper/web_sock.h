@@ -35,6 +35,7 @@ public:
 class IWebSockServerHandlerListener {
 public:
 	virtual void onWebSockHandler(std::shared_ptr<IWebSockHandler> handler, const std::string& key) = 0;
+	virtual void onDisconnect(std::shared_ptr<IWebSockHandler> handler) = 0;
 };
 
 class IWebSockServer
@@ -58,7 +59,7 @@ public:
 
 class IWrapperFactory {
 public:
-	virtual std::unique_ptr<IWebSockServer> CreateWebSockServer() = 0;
+	virtual std::shared_ptr<IWebSockServer> CreateWebSockServer() = 0;
     virtual std::shared_ptr<ISerialHandler> CreateSerialHandler() = 0;
     virtual void Run() = 0;
     virtual void Release() = 0;

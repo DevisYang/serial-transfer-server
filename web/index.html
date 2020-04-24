@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head> 
+        <meta charset="utf-8" />
+        <title>串口助手</title>
+        <link rel="stylesheet" href="jquery-easyui-1.7.0/themes/default/easyui.css" />
+        <link rel="stylesheet" href="jquery-easyui-1.7.0/themes/icon.css" />
+    </head> 
+    <body class="easyui-layout">
+        <div data-options="region:'west',title:'配置'" style="width:300px;">
+            <hr />
+            <table cellpadding="5">
+	    		<tr>
+	    			<td>串口号:</td>
+	    			<td>
+                        <select id="serial_name_id" class="easyui-combobox" data-options="textField:'text',valueField:'id'" name="language" style="width: 120px;">
+                            
+                        </select>
+                    </td>
+                    <td>
+                        <a id="serial_name_reflush" class="easyui-linkbutton" data-options="iconCls:'icon-reload'" >刷新</a>
+                    </td>
+                </tr>
+                <tr>
+	    			<td>波特率:</td>
+	    			<td>
+	    				<select id="serial_baud_id" class="easyui-combobox" name="language" style="width: 120px;">
+                            <option value="9600">9600</option>
+                            <option value="115200" selected="selected">115200</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a id="open_btn" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" style="width:100%;">打&emsp;开</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <a id="close_btn" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" style="width:100%;">关&emsp;闭</a>
+                    </td>
+                </tr>
+            </table>
+            <hr />
+            <table cellpadding="5">
+	    		<tr>
+	    			<td>接&emsp;收:</td>
+	    			<td>
+                        <div style="width: 120px;">0</div>
+                    </td>
+                    <td><a class="easyui-linkbutton" data-options="iconCls:'icon-reload'" style="width:100%;">清零</a></td>
+                </tr>
+                <tr>
+	    			<td>发&emsp;送:</td>
+	    			<td>
+	    				<div style="width: 120px;">0</div>
+                    </td>
+                    <td><a class="easyui-linkbutton" data-options="iconCls:'icon-reload'" style="width:100%;">清零</a></td>
+                </tr>
+            </table>
+            <hr />
+            <table cellpadding="5">
+                <tr>
+                    <td id="message_view"></td>
+                </tr>
+            </table>
+        </div>
+        <div data-options="region:'center',title:'数据收发'" style="padding:5px;background:#eee;">
+            <div class="easyui-layout" data-options="fit:true">
+                <div data-options="region:'center'" style="padding:5px;background:#FEFEFE;">
+                    <textarea id="recv_textarea" rows=100 name="" readonly="readonly" class="textarea easyui-validatebox" style="height:98%;width:100%;resize:none;font-size:16px"></textarea>
+                </div>
+                <div data-options="region:'south'" style="height:200px;padding:5px;">
+                    <textarea id="send_textarea" rows=1 name="" class="textarea easyui-validatebox" style="height:98%;width:100%;resize:none;font-size:16px;word-wrap:break-word;"></textarea>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="jquery-easyui-1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-easyui-1.7.0/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="js/serial.js"></script>
+    <script type="text/javascript" src="js/app.js"></script>
+</html>

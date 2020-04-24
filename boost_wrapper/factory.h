@@ -10,13 +10,14 @@
 class BoostWrapperFactoryImpl : public IWrapperFactory {
 public:
 	BoostWrapperFactoryImpl(int threads);
-    virtual std::unique_ptr<IWebSockServer> CreateWebSockServer();
+    virtual std::shared_ptr<IWebSockServer> CreateWebSockServer();
     virtual std::shared_ptr<ISerialHandler> CreateSerialHandler();
     virtual void Run();
     virtual void Release();
 private:
     boost::asio::io_service io;
 	int threads;
+	std::vector<std::thread> vec;
 	static void workThread(void* io);
 };
 

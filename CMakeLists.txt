@@ -17,4 +17,4 @@ add_executable(serial-transfer-server main.cpp TransferServer.cpp TransferServer
 
 
 # 直接依赖动态库
-target_link_libraries(serial-transfer-server web_sock)
+target_link_libraries(serial-transfer-server web_sock Setupapi)

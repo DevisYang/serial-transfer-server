@@ -72,6 +72,7 @@ void WebSockHandlerImpl::onRead(boost::beast::error_code ec, std::size_t bytes_t
     if(ec) {
         std::cout<<"读取失败:"<<ec.message()<<std::endl;
 		handlers.erase(ip);
+		listener->onDisconnect(obj);
 		obj = nullptr; // 如果没有行，智能指针会一直占用，该对象永远不会被释放
         return;
     }
@@ -93,8 +94,14 @@ void WebSockHandlerImpl::onWrite(boost::beast::error_code ec, std::size_t bytes_
 
 WebSockServerImplWithBeast::WebSockServerImplWithBeast(boost::asio::io_service &io_service)
 : io(io_service), acceptor(io_service), listener(nullptr) {
-
+	std::cout << "创建服务端" << std::endl;
 }
+
+WebSockServerImplWithBeast::~WebSockServerImplWithBeast()
+{
+	std::cout << "销毁服务端" << std::endl;
+}
+
 
 bool WebSockServerImplWithBeast::Open(int port) {
 	boost::asio::ip::tcp::endpoint endpoint{ boost::asio::ip::address::from_string("0.0.0.0") , (uint16_t)port };
@@ -139,10 +146,15 @@ bool WebSockServerImplWithBeast::Write(const std::string & key, uint8_t* data, i
 }
 
 void WebSockServerImplWithBeast::Close() {
-    for(const auto& v : handlers) {
-        v.second->Close();
-	}
 	acceptor.close();
+    for(const auto& v : handlers) {
+		try {
+			v.second->Close();
+		}
+		catch (boost::system::system_error& err) {
+
+		}   
+	}
 }
 
 void WebSockServerImplWithBeast::doAccept()
@@ -154,7 +166,7 @@ void WebSockServerImplWithBeast::doAccept()
 void WebSockServerImplWithBeast::onAccept(boost::beast::error_code ec, boost::asio::ip::tcp::socket socket)
 {
 	if (ec) {
-		std::cout << "on_accept返回错误: " << ec.message() << std::endl;
+		socket.close();
 		return;
 	}
 	std::string ip = (boost::format("%s:%d") % socket.remote_endpoint().address() % socket.remote_endpoint().port()).str();

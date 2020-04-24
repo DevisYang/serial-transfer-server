@@ -43,6 +43,7 @@ private:
 class WebSockServerImplWithBeast : public IWebSockServer {
 public:
     explicit WebSockServerImplWithBeast(boost::asio::io_service& io);
+	~WebSockServerImplWithBeast();
     virtual bool Open(int port);
 	virtual void RegisterHandlerListener(IWebSockServerHandlerListener* listener);
 	virtual bool Write(const std::string& key, uint8_t* data, int size);

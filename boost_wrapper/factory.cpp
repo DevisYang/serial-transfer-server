@@ -1,8 +1,9 @@
-//
+﻿//
 // Created by cgutech on 2020/4/16.
 //
 
 #include "factory.h"
+#include <iostream>
 #include "WebSockServerImplWithBeast.h"
 #include "SerialHandlerImpl.h"
 BoostWrapperFactoryImpl::BoostWrapperFactoryImpl(int ths)
@@ -10,27 +11,26 @@ BoostWrapperFactoryImpl::BoostWrapperFactoryImpl(int ths)
 
 }
 
-std::unique_ptr<IWebSockServer> BoostWrapperFactoryImpl::CreateWebSockServer() {
-	return std::unique_ptr<IWebSockServer>(new WebSockServerImplWithBeast(io));
+std::shared_ptr<IWebSockServer> BoostWrapperFactoryImpl::CreateWebSockServer() {
+	return std::shared_ptr<WebSockServerImplWithBeast>(new WebSockServerImplWithBeast(io));
 }
 
 std::shared_ptr<ISerialHandler> BoostWrapperFactoryImpl::CreateSerialHandler() {
-	return std::shared_ptr<ISerialHandler>(new SerialHandlerImpl(io));
+	return std::shared_ptr<SerialHandlerImpl>(new SerialHandlerImpl(io));
 }
 
 void BoostWrapperFactoryImpl::Run() {
-	std::vector<std::thread> v;
-	v.reserve(threads - 1);
-
-	for (auto i = threads - 1; i > 0; --i) {
-		std::thread th(workThread, this);
-		v.emplace_back(std::move(th));
+	for (auto i = threads; i > 0; i--) {
+		vec.push_back(std::thread(workThread, this));
 	}
-	io.run();
 }
 
 void BoostWrapperFactoryImpl::Release() {
-	delete this;
+	std::cout << "销毁工厂对象" << std::endl;
+	for (auto i = threads; i > 0; i--) {
+		io.stop();
+	}
+	vec.clear();
 }
 
 void BoostWrapperFactoryImpl::workThread(void* obj) {
